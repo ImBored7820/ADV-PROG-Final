@@ -11,23 +11,30 @@
     ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.edk2-uefi-shell.enable = true; # For booting from another EFI parition
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot = {
+    loader = {
+      systemd-boot = {
+        enable = true;
+	edk2-ufei-shell.enable = true;
+      };
+      efi.canTouchVariables = true; # For booting from another EFI partition 
+      kernelPackages = pkgs.linuxPackages_latest; # Disable later for Linux Surface Kernel
+    };
+  };
 
-  # Auto Upgrade Test
+  # Auto Upgrade 
 
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.allowReboot = true;
-  system.autoUpgrade.channel = "https://channels.nixos.org/nixos-unstable";
+  system.autoupgrade = {
+    enable = true;
+    allowReboot = true;
+    channel = "https://channels.nixos.org/nixos-unstable"; # Unstable Channel, 25.11 is default
+  };
 
-  networking.hostName = "MeArchyOS"; # Define your hostname.
-
-  # Configure network connections interactively with nmcli or nmtui.
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "MeArchyOS";
+    networkmanager.enable = true
+  };
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -54,21 +61,9 @@
   # services.xserver.xkb.layout = "us";
   # services.xserver.xkb.options = "eurosign:e,caps:escape";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound.
-  # services.pulseaudio.enable = true;
-  # OR
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
+
+  nixpkgs.config.allowUnfree = true; # Use like unliscened products
   users.users.musa = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
@@ -86,6 +81,11 @@
   programs.firefox.enable = true;
   programs.hyprland.enable = true;
 
+  programs = {
+    firefox.enable = true;
+    hyprland.enable = true;
+  };
+
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   # environment.systemPackages = with pkgs; [
@@ -102,15 +102,22 @@
   # };
 
   # List services that you want to enable:
-  nixpkgs.config.allowUnfree = true;
-  services.flatpak.enable = true;
+
+  services = {
+    printing.enable = true; # Enable CUPS to print documents
+    pipewire = { # Sound
+      enable = true;
+      pulse.enable = true;
+    };
+    libinput.enable = true; # Touchpad support 
+    flatpak.enable = true; 
+    openssh.enable = true; # SSH Daemon
+  };
+
   hardware = {
     enableAllFirmware = true;
     bluetooth.enable = true;
   };
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -143,4 +150,3 @@
   system.stateVersion = "25.11"; # Did you read the comment?
 
 }
-
