@@ -16,16 +16,21 @@
     loader = {
       systemd-boot = {
         enable = true;
-	edk2-ufei-shell.enable = true;
+	edk2-uefi-shell.enable = true;
       };
-      efi.canTouchVariables = true; # For booting from another EFI partition 
-      kernelPackages = pkgs.linuxPackages_latest; # Disable later for Linux Surface Kernel
+      efi.canTouchEfiVariables = true; # For booting from another EFI partition 
     };
+    kernelPackages = pkgs.linuxPackages_latest; # Disable later for Linux Surface Kernel
+    
   };
+
+   nix.nixPath = [
+    "nixos-config=/home/your_username/nixos-config/configuration.nix"
+   ];
 
   # Auto Upgrade 
 
-  system.autoupgrade = {
+  system.autoUpgrade = {
     enable = true;
     allowReboot = true;
     channel = "https://channels.nixos.org/nixos-unstable"; # Unstable Channel, 25.11 is default
@@ -33,7 +38,7 @@
 
   networking = {
     hostName = "MeArchyOS";
-    networkmanager.enable = true
+    networkmanager.enable = true;
   };
 
   # Set your time zone.
@@ -75,11 +80,11 @@
       tree
       sbctl
       fastfetch
+      nixos-generators
+      yazi
     ];
   };
 
-  programs.firefox.enable = true;
-  programs.hyprland.enable = true;
 
   programs = {
     firefox.enable = true;
